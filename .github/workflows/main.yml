@@ -1,0 +1,34 @@
+name: morning
+on:
+  schedule:
+  - cron:  '* * * * *'
+  workflow_dispatch:
+
+jobs:
+  send_message:
+    runs-on: ubuntu-latest
+    name: Say hello to your girlfriend every day
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3
+      with:
+        ref: master
+
+    - name: sender
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.10.0'
+        architecture: 'x64'
+    - run: pip install -r ./requirements.txt && python ./main.py
+
+    env:
+      APP_KEY: ${{ secrets.APP_KEY }}
+      APP_ID: ${{ secrets.APP_ID }}
+      APP_SECRET: ${{ secrets.APP_SECRET }}
+      TEMPLATE_ID: ${{ secrets.TEMPLATE_ID }}
+      USER_IDS: ${{ secrets.USER_IDS }}
+      START_DATE: ${{ secrets.START_DATE }}
+      NAME: ${{ secrets.NAME }}
+      BIRTHDAY: ${{ secrets.BIRTHDAY }}
+      CITY: ${{ secrets.CITY }}
