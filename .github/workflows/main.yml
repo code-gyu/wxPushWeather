@@ -1,11 +1,16 @@
-name: morning
+name: wx天气预报推送
+
 on:
   schedule:
-  - cron:  '* * * * *'
+    # 启动时间，为 UTC 时间对应北京时间早7点
+    - cron : '00 23 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
-  send_message:
+  build:
     runs-on: ubuntu-latest
     name: Say hello to your girlfriend every day
 
@@ -13,14 +18,21 @@ jobs:
     - name: checkout
       uses: actions/checkout@v3
       with:
-        ref: master
+        ref: main
 
-    - name: sender
-      uses: actions/setup-python@v2
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
       with:
-        python-version: '3.10.0'
-        architecture: 'x64'
-    - run: pip install -r ./requirements.txt && python ./main.py
+        python-version: "3.10"
+
+    - name: Install pip
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: Run weather
+      run: |
+        python main.py
 
     env:
       APP_KEY: ${{ secrets.APP_KEY }}
