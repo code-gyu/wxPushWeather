@@ -20,7 +20,7 @@ wxPushWeather
 </div>
 <br>
 
-**wxPushWeather 是一个用于微信测试号给订阅的用户推送微信消息的脚本【给女朋友专属的浪漫，微信自动推送消息】，用python实现而成,代码极其简单，新手上手也特别容易。**
+**wxPushWeather 是一个用于微信测试号给订阅的用户推送微信消息的脚本【给女朋友专属的早晚浪漫，微信自动推送消息】，用python实现而成,代码极其简单，新手上手也特别容易。**
 
 **原理：使用Github Action功能，运行python程序，实现无服务器的免费任务，比如天气推送，签到**
 
@@ -45,7 +45,13 @@ wxPushWeather
 - **支持生日提醒**
 - **设置值得纪念的日子**
 - **自定义入参，模板定制更个性**
+- **解决wx测试号上限20字的问题
 - **使用github actions 不需要拥有服务器，白嫖actions执行，每天定时发送**
+
+---
+![IMG_1986](https://github.com/code-gyu/wxPushWeather/assets/59634897/c8d615e7-c496-4b90-8722-7ecca07f824c)
+![IMG_1985](https://github.com/code-gyu/wxPushWeather/assets/59634897/775a65a4-236d-4de9-95d7-fc1a39760f59)
+
 
 ---
 ### 【操作流程】
