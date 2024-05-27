@@ -2,7 +2,7 @@ import json
 from datetime import date, datetime
 from lunardate import LunarDate
 from wechatpy import WeChatClient
-from wechatpy.client.api import WeChatMessage, WeChatTemplate
+from wechatpy.client.api import WeChatMessage
 import requests
 import os
 
@@ -18,8 +18,10 @@ app_id = os.environ["APP_ID"]
 app_secret = os.environ["APP_SECRET"]
 # 微信公众号的user_id,多个用;（分号）隔开
 user_ids = os.environ["USER_IDS"]
-# 模板id
-template_id = os.environ["TEMPLATE_ID"]
+# 白天模板id
+template_id_day = os.environ["TEMPLATE_ID_DAY"]
+# 晚上模板id
+template_id_night = os.environ["TEMPLATE_ID_NIGHT"]
 # 呢称
 name = os.environ['NAME']
 # 城市
@@ -60,9 +62,9 @@ day_forecast_json = json.loads(requests.get(url, params, headers=headers).text)
 # 天气状况
 day_forecast_today = day_forecast_json["daily"][0]
 # 日出时间
-sunrise = day_forecast_today["sunrise"]
+day_forecast_today_sunrise = day_forecast_today["sunrise"]
 # 日落时间
-sunset = day_forecast_today["sunset"]
+day_forecast_today_sunset = day_forecast_today["sunset"]
 # 天气
 day_forecast_today_weather = day_forecast_today["textDay"]
 # 最低温度
@@ -84,11 +86,23 @@ day_forecast_today_windScaleDay = day_forecast_today["windScaleDay"]
 # 天气状况
 day_forecast_tomorrow = day_forecast_json["daily"][1]
 # 天气
-day_forecast_tomorrow_textDay = day_forecast_tomorrow["textDay"]
+day_forecast_tomorrow_weather = day_forecast_tomorrow["textDay"]
+# 日出时间
+day_forecast_tomorrow_sunrise = day_forecast_tomorrow["sunrise"]
+# 日落时间
+day_forecast_tomorrow_sunset = day_forecast_tomorrow["sunset"]
 # 最低温度
 day_forecast_tomorrow_temperature_min = day_forecast_tomorrow["tempMin"] + "℃"
 # 最高温度
 day_forecast_tomorrow_temperature_max = day_forecast_tomorrow["tempMax"] + "℃"
+# 夜间天气
+day_forecast_tomorrow_night = day_forecast_today["textNight"]
+# 白天风向
+day_forecast_tomorrow_windDirDay = day_forecast_today["windDirDay"]
+# 夜间风向
+day_forecast_tomorrow_windDirNight = day_forecast_today["windDirNight"]
+# 风力等级
+day_forecast_tomorrow_windScaleDay = day_forecast_today["windScaleDay"]
 # -----------------------明天天气状况-----------------------------
 
 
@@ -155,8 +169,9 @@ def get_words():
     chunk_size = 20
     split_notes = [text[i:i + chunk_size] for i in range(0, len(text), chunk_size)]
     # 分配note N 如果split_notes元素少于5，则用空字符串填充
-    note1, note2, note3, note4, note5 = (split_notes + [""] * 5)[:5]
+    [note1, note2, note3, note4, note5] = (split_notes + [""] * 5)[:5]
     return note1, note2, note3, note4, note5
+
 
 if __name__ == '__main__':
     # 获取微信客户端
@@ -168,32 +183,43 @@ if __name__ == '__main__':
     # 获取彩虹屁
     note1, note2, note3, note4, note5 = get_words()
 
+    # 晚上则发次日的推送
+    strDay = "today"
+    # 当前时间
+    timeline = int(datetime.now().strftime("%H%m"))
+    # 如果当前时间大于15，则发送明天天气
+    if timeline > 15:
+        strDay = "tomorrow"
+        template_id_day = template_id_night
+
+    print("当前时间：" + str(timeline)+"即将推送："+strDay+"信息")
+
     data = {"name": {"value": name},
             "today": {"value": today_date},
             "city": {"value": city},
-            "weather": {"value": day_forecast_today_weather},
+            "weather": {"value": globals()[f'day_forecast_{strDay}_weather']},
             "now_temperature": {"value": now_temperature},
-            "min_temperature": {"value": day_forecast_today_temperature_min},
-            "max_temperature": {"value": day_forecast_today_temperature_max},
+            "min_temperature": {"value": globals()[f'day_forecast_{strDay}_temperature_min']},
+            "max_temperature": {"value": globals()[f'day_forecast_{strDay}_temperature_max']},
             "love_date": {"value": get_count()},
             "birthday": {"value": get_birthday()},
             "diff_date1": {"value": days_until_spring_festival()},
-            "sunrise": {"value": sunrise},
-            "sunset": {"value": sunset},
-            "textNight": {"value": day_forecast_today_night},
-            "windDirDay": {"value": day_forecast_today_windDirDay},
-            "windDirNight": {"value": day_forecast_today_windDirNight},
-            "windScaleDay": {"value": day_forecast_today_windScaleDay},
+            "sunrise": {"value": globals()[f'day_forecast_{strDay}_sunrise']},
+            "sunset": {"value": globals()[f'day_forecast_{strDay}_sunset']},
+            "textNight": {"value": globals()[f'day_forecast_{strDay}_night']},
+            "windDirDay": {"value": globals()[f'day_forecast_{strDay}_windDirDay']},
+            "windDirNight": {"value": globals()[f'day_forecast_{strDay}_windDirNight']},
+            "windScaleDay": {"value": globals()[f'day_forecast_{strDay}_windScaleDay']},
             "note1": {"value": note1},
             "note2": {"value": note2},
             "note3": {"value": note3},
             "note4": {"value": note4},
             "note5": {"value": note5}
             }
-    print(data)
+    # print(data)
 
     # 拆分user_ids
     user_ids = user_ids.split(";")
     for e in user_ids:
-        res = wm.send_template(e, template_id, data)
+        res = wm.send_template(e, template_id_day, data)
         print(res)
