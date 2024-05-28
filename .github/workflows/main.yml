@@ -40,7 +40,8 @@ jobs:
       APP_KEY: ${{ secrets.APP_KEY }}
       APP_ID: ${{ secrets.APP_ID }}
       APP_SECRET: ${{ secrets.APP_SECRET }}
-      TEMPLATE_ID: ${{ secrets.TEMPLATE_ID }}
+      TEMPLATE_ID_DAY: ${{ secrets.TEMPLATE_ID_DAY }}
+      TEMPLATE_ID_NIGHT: ${{ secrets.TEMPLATE_ID_NIGHT }}
       USER_IDS: ${{ secrets.USER_IDS }}
       START_DATE: ${{ secrets.START_DATE }}
       NAME: ${{ secrets.NAME }}
