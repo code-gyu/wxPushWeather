@@ -185,8 +185,8 @@ if __name__ == '__main__':
 
     # 晚上则发次日的推送
     strDay = "today"
-    # 当前时间
-    timeline = int(datetime.now().strftime("%H%m"))
+    # 当前时间 UTC和北京时间差 8 小时
+    timeline = int(datetime.now().strftime("%H")) + 8
     # 如果当前时间大于15，则发送明天天气
     if timeline > 15:
         strDay = "tomorrow"
