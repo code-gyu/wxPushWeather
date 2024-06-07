@@ -1,5 +1,7 @@
 import json
-from datetime import date, datetime
+from datetime import date
+from datetime import datetime, timedelta
+
 from lunardate import LunarDate
 from wechatpy import WeChatClient
 from wechatpy.client.api import WeChatMessage
@@ -183,16 +185,21 @@ if __name__ == '__main__':
     # 获取彩虹屁
     note1, note2, note3, note4, note5 = get_words()
 
-    # 晚上则发次日的推送
+    # 获取当前UTC时间
+    now_utc = datetime.utcnow()
+    # 转换为北京时间（UTC+8）
+    beijing_time = now_utc + timedelta(hours=0)
+    # 获取当前小时数
+    hour_of_day = beijing_time.hour
+
+    # 默认发当天
     strDay = "today"
-    # 当前时间 UTC和北京时间差 8 小时
-    timeline = int(datetime.now().strftime("%H")) + 8
-    # 如果当前时间大于15，则发送明天天气
-    if timeline > 15:
+    # 如果当前时间大于15点，也就是晚上，则发送明天天气
+    if hour_of_day > 15:
         strDay = "tomorrow"
         template_id_day = template_id_night
 
-    print("当前时间：" + str(timeline)+"即将推送："+strDay+"信息")
+    print("当前时间：" + str(hour_of_day)+"即将推送："+strDay+"信息")
 
     data = {"name": {"value": name},
             "today": {"value": today_date},
@@ -220,6 +227,6 @@ if __name__ == '__main__':
 
     # 拆分user_ids
     user_ids = user_ids.split(";")
-    for e in user_ids:
-        res = wm.send_template(e, template_id_day, data)
-        print(res)
+    # for e in user_ids:
+    #     res = wm.send_template(e, template_id_day, data)
+    #     print(res)
