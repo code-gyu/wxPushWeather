@@ -188,10 +188,9 @@ if __name__ == '__main__':
     # 获取当前UTC时间
     now_utc = datetime.utcnow()
     # 转换为北京时间（UTC+8）
-    beijing_time = now_utc + timedelta(hours=0)
+    beijing_time = now_utc + timedelta(hours=8)
     # 获取当前小时数
     hour_of_day = beijing_time.hour
-
     # 默认发当天
     strDay = "today"
     # 如果当前时间大于15点，也就是晚上，则发送明天天气
@@ -199,7 +198,7 @@ if __name__ == '__main__':
         strDay = "tomorrow"
         template_id_day = template_id_night
 
-    print("当前时间：" + str(hour_of_day)+"即将推送："+strDay+"信息")
+    print("当前时间：" + str(beijing_time)+"即将推送："+strDay+"信息")
 
     data = {"name": {"value": name},
             "today": {"value": today_date},
